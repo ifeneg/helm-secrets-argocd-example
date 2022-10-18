@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-of-apps
+  namespace: argocd
+spec:
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 2
+      backoff:
+        duration: 2s
+        factor: 2
+        maxDuration: 1m
+  destination:
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: app-of-apps/apps
+    repoURL: https://github.com/ifeneg/helm-secrets-argocd-example
+    targetRevision: main
